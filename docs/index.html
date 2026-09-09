@@ -669,6 +669,50 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
 .delay-1{animation-delay:.1s;}
 .delay-2{animation-delay:.2s;}
 .delay-3{animation-delay:.3s;}
+
+/* FAMILY COVER — the R23/week upgrade the SMS campaign sells. */
+.family{
+  background:linear-gradient(160deg, var(--navy) 0%, var(--navy-deeper) 100%);
+  color:#fff; padding:96px 0;
+}
+.family .section-eyebrow{color:var(--sky);}
+.family .section-title{color:#fff;}
+.family .section-sub{color:rgba(255,255,255,.72);}
+.family-price{
+  display:grid; grid-template-columns:repeat(3,1fr); gap:24px;
+  margin:48px 0 40px; text-align:center;
+}
+.family-price > div{position:relative; padding:0 16px;}
+.family-price > div:not(:last-child)::after{
+  content:""; position:absolute; right:0; top:15%; bottom:15%;
+  width:1px; background:rgba(255,255,255,.18);
+}
+.family-num{
+  font-family:var(--display); font-weight:900; line-height:1;
+  font-size:clamp(40px,5vw,60px); letter-spacing:-.02em; color:#fff;
+}
+.family-num .accent{color:var(--sky);}
+.family-label{margin-top:10px; font-size:14px; color:rgba(255,255,255,.7); letter-spacing:.04em;}
+.family-list{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:12px 28px; max-width:760px; margin:0 auto 40px; padding:0; list-style:none;
+}
+.family-list li{
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:16px; color:rgba(255,255,255,.9);
+}
+.family-list li::before{
+  content:""; flex:0 0 auto; width:8px; height:8px; margin-top:8px;
+  border-radius:50%; background:var(--sky);
+}
+.family-note{
+  text-align:center; font-size:15px; color:rgba(255,255,255,.62);
+  max-width:620px; margin:0 auto;
+}
+@media(max-width:780px){
+  .family-price{grid-template-columns:1fr; gap:32px;}
+  .family-price > div::after{display:none;}
+}
 </style>
 </head>
 <body>
@@ -702,7 +746,7 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
         <span class="accent">Help on the way.</span>
       </h1>
       <p class="hero-sub fade-in delay-2">
-        Your Auto Plus Plan includes <strong>armed response</strong>, <strong>medical emergency</strong>, <strong>RAF claims assistance</strong>, <strong>licence renewals</strong> and <strong>traffic fines</strong> — all in one app. From 5,500+ guards across South Africa, faster than you can dial.
+        Your Auto Plus Plan includes <strong>armed response</strong>, <strong>medical emergency</strong>, <strong>RAF claims assistance</strong>, <strong>licence renewals</strong> and <strong>traffic fines</strong> and <strong>free wills</strong> — all in one app. From 5,500+ guards across South Africa, faster than you can dial.
       </p>
       <div class="hero-ctas fade-in delay-3" id="download">
         <a href="#" class="store-badge" aria-label="Download on the App Store">
@@ -799,6 +843,15 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
         <div class="svc-title">The Talking Point</div>
         <div class="svc-body">Confidential mental health chat support — a counsellor in your pocket, available when life gets heavy.</div>
       </div>
+
+      <div class="svc">
+        <div class="svc-num">07</div>
+        <div class="svc-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><path d="M9 13h6"/><path d="M9 17h3"/></svg>
+        </div>
+        <div class="svc-title">Free Wills</div>
+        <div class="svc-body">A professionally drafted will at no cost, for you and everyone on your plan. The one piece of admin nobody gets around to.</div>
+      </div>
     </div>
   </div>
 </section>
@@ -851,6 +904,46 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
         <div class="proof-label">Trusted partner since</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- FAMILY COVER -->
+<section class="family" id="family">
+  <div class="wrap">
+    <div style="text-align:center; max-width:720px; margin:0 auto;">
+      <div class="section-eyebrow">Cover the people you drive home to</div>
+      <h2 class="section-title">Five people. For the price of one.</h2>
+      <p class="section-sub">Your Auto Plus Plan protects you. For R23 a week it protects your whole household — you plus four family members, each with the full service.</p>
+    </div>
+
+    <div class="family-price">
+      <div>
+        <div class="family-num"><span class="accent">R</span>23</div>
+        <div class="family-label">Per week, for all five</div>
+      </div>
+      <div>
+        <div class="family-num">5</div>
+        <div class="family-label">People covered — you plus four</div>
+      </div>
+      <div>
+        <div class="family-num">66<span class="accent">c</span></div>
+        <div class="family-label">Per person, per day</div>
+      </div>
+    </div>
+
+    <ul class="family-list">
+      <li>Armed response</li>
+      <li>Medical emergency</li>
+      <li>Licence disc renewal</li>
+      <li>Traffic fines</li>
+      <li>RAF claim assistance</li>
+      <li>Free Wills</li>
+    </ul>
+
+    <p class="family-note">
+      Test it before you pay anything. Download the app, press the panic button once, and our
+      control room answers and calls you straight back. Cancel any time.
+    </p>
   </div>
 </section>
 
@@ -918,7 +1011,7 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
       <details class="faq-item">
         <summary>Can my family use the same plan?</summary>
         <div class="faq-answer">
-          Yes — the Family plan covers your spouse and dependants on a single subscription. Contact us on 0860 203 203 to upgrade.
+          Yes. Family cover is <strong>R23 a week for five people</strong> — you plus four family members — which works out to 66c per person per day. Everyone gets the full service: armed response, medical emergency, licence disc renewal, traffic fines, RAF claim assistance and Free Wills. Add it in the app, or call us on 0860 203 203.
         </div>
       </details>
       <details class="faq-item">
