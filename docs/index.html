@@ -1092,5 +1092,24 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
   </div>
 </footer>
 
+
+<script>
+// Campaign click tracking. The SMS links here with ?t=<token>. We report the
+// visit in the background and tidy the address bar. Nothing here can block or
+// delay the page: if tracking fails the customer still sees everything.
+(function () {
+  try {
+    var t = new URLSearchParams(location.search).get('t');
+    if (!t) return;
+    fetch('https://lgziureyluogydpbsgfq.supabase.co/functions/v1/ap-click', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ t: t }),
+      keepalive: true
+    }).catch(function () { /* tracking is not the customer's problem */ });
+    history.replaceState({}, '', location.pathname + location.hash);
+  } catch (e) { /* ignore */ }
+})();
+</script>
 </body>
 </html>
