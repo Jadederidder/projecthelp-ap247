@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Auto Pedigree 24/7 — brochure</title>
+<!--
+  THE AUTO PEDIGREE 24/7 BROCHURE, AS SOURCE
+  ==========================================
+  The previous brochure existed only as a 3.2MB PDF. No HTML, no design file,
+  in any repository. When the product name changed, "Premium Help" was on all
+  eight pages including the T&Cs and there was nothing to edit — which is how
+  a customer came to get an SMS about one product and a brochure about
+  another.
+
+  So it is HTML now, and `node build.js` renders the PDF. A rename is one
+  search-and-replace, and the brochure and the landing page share the same
+  tokens below, so they cannot drift apart by accident.
+
+  Content is carried over verbatim from the 2026-10 PDF, with three changes,
+  all of them JD's:
+    - the product is Auto Pedigree 24/7, the name on the App Store listing
+    - the cover mockup is a real screenshot, not a design of an app that was
+      never shipped
+    - page 6 said "search Premium Help in the App Store", which would have
+      found nothing
+
+  The cover photograph is lifted out of the original PDF so the artwork is
+  unchanged.
+-->
+<style>
+@import url("assets/fonts.css");
+
+/* Shared with docs/index.html. If a colour changes, change it in both. */
+:root{
+  --navy:#1B1464;
+  --navy-dark:#100c40;
+  --navy-deeper:#080631;
+  --red:#E8192C;
+  --red-dark:#c8121f;
+  --sky:#00AEEF;
+  --sky-soft:#e6f7fd;
+  --ink:#0a0a14;
+  --ink-soft:#3a3a4d;
+  --ink-mute:#6b6b80;
+  --paper:#FAFAFA;
+  --line:#e4e4ec;
+  --display:'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --body:'Barlow', system-ui, sans-serif;
+}
+
+*{box-sizing:border-box; margin:0; padding:0;}
+html{-webkit-print-color-adjust:exact; print-color-adjust:exact;}
+body{font-family:var(--body); color:var(--ink); background:#525263;}
+
+.page{
+  position:relative; overflow:hidden;
+  width:210mm; height:297mm;
+  margin:0 auto 8mm; background:#fff;
+  page-break-after:always; break-after:page;
+}
+.page:last-child{page-break-after:auto; break-after:auto; margin-bottom:0;}
+
+@page{ size:A4; margin:0; }
+@media print{
+  body{background:#fff;}
+  .page{margin:0; box-shadow:none;}
+}
+
+/* ---------- shared type ---------- */
+.eyebrow{
+  font-family:var(--display); font-weight:700;
+  font-size:10.5pt; letter-spacing:.20em; text-transform:uppercase;
+  color:var(--sky);
+}
+.eyebrow.on-light{color:var(--red);}
+h1{
+  font-family:var(--display); font-weight:900;
+  font-size:40pt; line-height:.90; letter-spacing:-.01em;
+}
+h2{
+  font-family:var(--display); font-weight:800;
+  font-size:30pt; line-height:.95; letter-spacing:-.005em; color:var(--navy);
+}
+.lede{font-size:12pt; font-weight:600; color:var(--ink); margin-top:5mm;}
+p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
+.pad{padding:14mm 15mm;}
+
+/* ---------- cover ---------- */
+.cover{background:var(--navy-deeper); color:#fff;}
+.cover-photo{
+  position:absolute; inset:0 0 auto 0; height:118mm;
+  background:url("assets/cover-family.png") center top/cover no-repeat;
+}
+.cover-photo::after{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(8,6,49,.06) 0%, rgba(8,6,49,.48) 46%, var(--navy-deeper) 99%);
+}
+/* The strip occupies the bottom 76mm, so the body gets everything above it
+   and nothing is laid out underneath it. inset:0 put the copy behind the
+   strip and silently cropped two paragraphs off the cover. */
+.cover-body{
+  position:absolute; left:0; right:0; top:0; bottom:76mm;
+  display:flex; flex-direction:column;
+  padding:12mm 15mm 7mm;
+}
+.cover-badge{
+  align-self:flex-end;
+  background:#fff; border-radius:7px; padding:3.5mm 5mm;
+  box-shadow:0 3mm 8mm rgba(0,0,0,.28);
+  display:flex; align-items:center; gap:3mm;
+}
+.cover-badge img{height:13mm; width:auto; display:block;}
+.cover-badge span{
+  font-family:var(--display); font-weight:700; font-size:8.5pt;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-mute);
+  border-left:1px solid var(--line); padding-left:3mm; line-height:1.25;
+}
+.cover-main{
+  display:grid; grid-template-columns:1fr 54mm; gap:9mm;
+  align-items:end; margin-top:auto;
+}
+.cover-copy h1{color:#fff;}
+.cover-copy h1 .mark{
+  color:#fff; background:var(--red);
+  padding:0 3mm 1.2mm; border-radius:4px;
+  display:inline-block; line-height:1;
+}
+.cover-copy .lede{color:#fff; font-size:12.5pt; margin-top:3.5mm;}
+.cover-copy p{color:rgba(255,255,255,.80); margin-top:3mm; max-width:104mm; font-size:9.1pt;}
+.privacy{
+  margin-top:5mm; padding-top:4mm; border-top:1px solid rgba(255,255,255,.18);
+  display:flex; gap:3mm; align-items:flex-start; max-width:108mm;
+}
+.privacy svg{width:4.2mm; height:4.2mm; flex:0 0 auto; margin-top:.6mm; fill:var(--sky);}
+.privacy p{color:rgba(255,255,255,.72); font-size:8.6pt; margin:0;}
+.privacy b{color:#fff;}
+.cover-phone{
+  border-radius:7mm; padding:1.3mm;
+  background:linear-gradient(160deg,#39414f,#141821);
+  box-shadow:0 8mm 20mm rgba(0,0,0,.45);
+}
+.cover-phone img{display:block; width:100%; border-radius:5.8mm;}
+
+/* cover services strip */
+.cover-strip{
+  position:absolute; left:0; right:0; bottom:0; height:76mm;
+  background:#fff; padding:9mm 15mm 0;
+}
+.strip-head{display:flex; justify-content:space-between; align-items:baseline;}
+.strip-head .eyebrow{color:var(--navy); letter-spacing:.22em;}
+.strip-head span{font-size:9.4pt; color:var(--ink-mute);}
+.services{
+  display:grid; grid-template-columns:repeat(5,1fr); gap:5mm;
+  margin-top:7mm;
+}
+.svc{text-align:left;}
+.svc-ico{
+  width:13mm; height:13mm; border-radius:3.6mm;
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:3mm;
+}
+.svc-ico svg{width:6.4mm; height:6.4mm;}
+.svc-name{
+  font-family:var(--display); font-weight:700; font-size:10pt;
+  line-height:1.15; color:var(--navy); text-transform:uppercase; letter-spacing:.03em;
+}
+.i-red{background:#fdeaec;} .i-red svg{fill:var(--red);}
+.i-green{background:#e7f6ee;} .i-green svg{fill:#1f9d5b;}
+.i-sky{background:var(--sky-soft);} .i-sky svg{fill:var(--sky);}
+.i-slate{background:#eef0f6;} .i-slate svg{fill:#4a5578;}
+.i-violet{background:#f0ecfd;} .i-violet svg{fill:#6b4ce0;}
+
+.getapp{display:flex; align-items:center; gap:7mm; margin-top:9mm;}
+.qr{width:22mm; height:22mm; flex:0 0 auto;}
+.getapp-copy{font-family:var(--display); font-weight:700; font-size:11pt; color:var(--navy); letter-spacing:.02em;}
+.stores{display:flex; gap:3mm; margin-top:2.5mm;}
+.store{
+  display:flex; align-items:center; gap:2.2mm;
+  background:#0a0a14; color:#fff; border-radius:2.4mm;
+  padding:2.2mm 4mm;
+}
+.store svg{width:5mm; height:5mm; fill:#fff;}
+.store small{display:block; font-size:5.6pt; letter-spacing:.07em; text-transform:uppercase; opacity:.78; line-height:1;}
+.store b{display:block; font-family:var(--display); font-weight:700; font-size:10pt; line-height:1.1;}
+
+/* ---------- interior pages ---------- */
+.sheet{display:flex; flex-direction:column; height:100%;}
+.sheet-hero{
+  background:var(--navy); color:#fff;
+  padding:14mm 15mm 13mm;
+  position:relative; overflow:hidden;
+}
+.sheet-hero::after{
+  content:""; position:absolute; right:-24mm; top:-30mm;
+  width:95mm; height:95mm; border-radius:50%;
+  background:radial-gradient(circle, rgba(0,174,239,.30), transparent 68%);
+}
+.sheet-hero .inner{position:relative; z-index:1; display:grid; grid-template-columns:1fr 54mm; gap:10mm; align-items:center;}
+.sheet-hero h2{color:#fff;}
+.sheet-hero .lede{color:#fff;}
+.sheet-hero p{color:rgba(255,255,255,.80); margin-top:4mm;}
+.sheet-phone{border-radius:6mm; padding:1.1mm; background:linear-gradient(160deg,#39414f,#141821); box-shadow:0 6mm 16mm rgba(0,0,0,.4);}
+.sheet-phone img{display:block; width:100%; border-radius:5mm;}
+
+.facts{display:flex; gap:5mm; margin-top:8mm; flex-wrap:wrap;}
+.fact{
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14);
+  border-radius:3mm; padding:4mm 5mm; min-width:46mm; flex:1;
+}
+.fact b{
+  display:block; font-family:var(--display); font-weight:900;
+  font-size:21pt; line-height:1; color:var(--sky);
+}
+.fact span{display:block; font-size:8.4pt; color:rgba(255,255,255,.80); margin-top:1.6mm; line-height:1.4;}
+
+.sheet-body{padding:12mm 15mm 18mm; flex:1;}
+.steps{display:grid; grid-template-columns:repeat(3,1fr); gap:7mm; margin-top:6mm;}
+.step-n{
+  width:9mm; height:9mm; border-radius:50%;
+  background:var(--red); color:#fff;
+  font-family:var(--display); font-weight:800; font-size:12pt;
+  display:flex; align-items:center; justify-content:center; margin-bottom:3mm;
+}
+.step h4{font-family:var(--display); font-weight:700; font-size:12.5pt; color:var(--navy); margin-bottom:1.6mm;}
+.step p{font-size:9pt;}
+
+.notes{margin-top:10mm; padding-top:7mm; border-top:1px solid var(--line); display:grid; grid-template-columns:1fr 1fr; gap:7mm;}
+.note h4{font-family:var(--display); font-weight:700; font-size:11.5pt; color:var(--navy); margin-bottom:1.6mm;}
+.note p{font-size:8.8pt;}
+
+.pills{display:flex; flex-wrap:wrap; gap:2.4mm; margin-top:5mm;}
+.pill{
+  background:var(--sky-soft); color:#0b5d78;
+  border-radius:99px; padding:1.6mm 3.6mm;
+  font-size:8.2pt; font-weight:600;
+}
+.pill.warn{background:#fdeaec; color:#9a1220;}
+
+.disclaimer{
+  margin-top:8mm; background:var(--paper); border-left:2.6mm solid var(--sky);
+  padding:5mm 6mm; border-radius:0 2.4mm 2.4mm 0;
+}
+.disclaimer b{font-family:var(--display); font-weight:700; font-size:11pt; color:var(--navy); display:block; margin-bottom:1.6mm;}
+.disclaimer p{font-size:8.6pt;}
+
+.foot{
+  position:absolute; left:15mm; right:15mm; bottom:8mm;
+  display:flex; justify-content:space-between; align-items:center;
+  font-size:7.8pt; color:var(--ink-mute);
+  border-top:1px solid var(--line); padding-top:3mm;
+}
+.foot b{font-family:var(--display); font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:var(--navy);}
+
+/* ---------- terms ---------- */
+.terms{padding:13mm 15mm 16mm;}
+.terms h2{font-size:24pt; margin-bottom:6mm;}
+.terms h3{
+  font-family:var(--display); font-weight:700; font-size:12pt;
+  color:var(--navy); margin:6mm 0 2mm;
+}
+.terms h4{font-family:var(--body); font-weight:700; font-size:9pt; color:var(--ink); margin:3.5mm 0 1mm;}
+.terms p, .terms li{font-size:7.9pt; line-height:1.5; color:var(--ink-soft);}
+.terms p{margin-bottom:2mm;}
+.terms ul{margin:1.5mm 0 0 4mm;}
+.terms li{margin-bottom:1mm;}
+.terms .cols{column-count:2; column-gap:9mm;}
+.terms .cols > *{break-inside:avoid;}
+.contact{
+  margin-top:8mm; background:var(--navy); color:#fff;
+  border-radius:3mm; padding:6mm 7mm;
+  display:flex; justify-content:space-between; align-items:center;
+}
+.contact .eyebrow{color:var(--sky);}
+.contact b{display:block; font-family:var(--display); font-weight:700; font-size:14pt; margin-top:1.5mm;}
+.contact img{height:11mm; background:#fff; border-radius:4px; padding:2mm;}
+</style>
+</head>
+<body>
+
+<!-- ============================ 1. COVER ============================ -->
+<section class="page cover">
+  <div class="cover-photo"></div>
+  <div class="cover-body">
+    <div class="cover-badge">
+      <img src="assets/ap-logo.png" alt="Auto Pedigree" />
+      <span>Powered by<br>Project Help</span>
+    </div>
+
+    <div class="cover-main">
+      <div class="cover-copy">
+        <div class="eyebrow">Emergency response ecosystem</div>
+        <h1 style="margin-top:3mm">Auto Pedigree<br><span class="mark">24/7</span></h1>
+        <div class="lede">Help when you need it most.</div>
+        <p>
+          Over 5000 Armed and Medical Responders protecting you and your family.
+          Hold one button to reach the closest response vehicles from a nationwide network.
+        </p>
+        <p>
+          And if you are ever injured in a road accident, the RAF button starts your
+          Road Accident Fund claim — legal representation, reports and claims
+          management, at no cost to you.
+        </p>
+        <div class="privacy">
+          <svg viewBox="0 0 24 24"><path d="M12 1 3 5v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V5l-9-4Zm0 10.9h7c-.5 4.1-3.2 7.8-7 9V12H5V6.3l7-3.1v8.7Z"/></svg>
+          <p><b>Privacy first.</b> Your location is only shared with responders when you hold the panic button.</p>
+        </div>
+      </div>
+
+      <div class="cover-phone">
+        <img src="assets/app-licence.jpg" alt="The Auto Pedigree 24/7 app" />
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-strip">
+    <div class="strip-head">
+      <div class="eyebrow">Services</div>
+      <span>On-demand security and support. Anywhere, anytime.</span>
+    </div>
+
+    <div class="services">
+      <div class="svc">
+        <div class="svc-ico i-red"><svg viewBox="0 0 24 24"><path d="M12 2 4 5.5v5.8c0 5 3.4 9.7 8 10.7 4.6-1 8-5.7 8-10.7V5.5L12 2Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/></svg></div>
+        <div class="svc-name">Armed and medical response</div>
+      </div>
+      <div class="svc">
+        <div class="svc-ico i-green"><svg viewBox="0 0 24 24"><path d="M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0ZM3 6h11v6h3.5l2.5 3v2h-1.1a3.5 3.5 0 0 0-6.8 0H9.9a3.5 3.5 0 0 0-6.8 0H3V6Z"/></svg></div>
+        <div class="svc-name">RAF claims</div>
+      </div>
+      <div class="svc">
+        <div class="svc-ico i-sky"><svg viewBox="0 0 24 24"><path d="M3 5h18v14H3V5Zm2 3v2h7V8H5Zm0 4v2h5v-2H5Zm9-4v6h5V8h-5Z"/></svg></div>
+        <div class="svc-name">Licence disc renewal</div>
+      </div>
+      <div class="svc">
+        <div class="svc-ico i-slate"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4V4Zm2.5 3v2h11V7h-11Zm0 4v2h11v-2h-11Zm0 4v2h7v-2h-7Z"/></svg></div>
+        <div class="svc-name">Fines payment</div>
+      </div>
+      <div class="svc">
+        <div class="svc-ico i-violet"><svg viewBox="0 0 24 24"><path d="M6 2h8l4 4v16H6V2Zm7 1.5V7h3.5L13 3.5ZM8 11v1.6h8V11H8Zm0 4v1.6h8V15H8Z"/></svg></div>
+        <div class="svc-name">Free wills</div>
+      </div>
+    </div>
+
+    <div class="getapp">
+      <svg class="qr" viewBox="0 0 33 33" shape-rendering="crispEdges" aria-label="Scan to download Auto Pedigree 24/7"><rect width="33" height="33" fill="#fff"/><path class="qrline" stroke="#0a0a14" d="M2 2.5h7m1 0h1m1 0h1m1 0h2m1 0h1m2 0h2m2 0h7m-29 1h1m5 0h1m7 0h3m3 0h1m1 0h1m5 0h1m-29 1h1m1 0h3m1 0h1m1 0h2m2 0h1m1 0h6m2 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m1 0h1m1 0h3m1 0h3m2 0h2m1 0h1m1 0h3m1 0h1m-29 1h1m1 0h3m1 0h1m5 0h1m3 0h2m2 0h1m1 0h1m1 0h3m1 0h1m-29 1h1m5 0h1m1 0h2m1 0h5m1 0h4m1 0h1m5 0h1m-29 1h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7m-21 1h3m2 0h6m-18 1h1m1 0h1m1 0h4m1 0h2m1 0h1m1 0h1m2 0h1m2 0h3m1 0h2m1 0h1m-29 1h2m3 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h2m2 0h3m2 0h2m1 0h1m-28 1h2m1 0h7m4 0h1m3 0h2m1 0h1m1 0h2m1 0h1m-28 1h1m4 0h1m6 0h2m7 0h2m1 0h1m1 0h2m-27 1h1m1 0h2m1 0h1m4 0h1m1 0h2m2 0h3m2 0h2m-22 1h3m4 0h6m3 0h4m1 0h1m1 0h1m1 0h1m-27 1h1m1 0h1m2 0h7m3 0h1m3 0h3m4 0h2m-29 1h3m1 0h2m1 0h2m1 0h1m2 0h1m2 0h2m1 0h1m3 0h1m4 0h1m-29 1h2m4 0h2m1 0h2m1 0h4m1 0h1m1 0h3m5 0h2m-28 1h4m2 0h4m3 0h2m2 0h1m1 0h4m2 0h3m-29 1h1m1 0h1m3 0h2m1 0h1m4 0h1m1 0h2m2 0h2m2 0h5m-20 1h1m2 0h7m6 0h1m-26 1h1m1 0h1m3 0h3m1 0h1m3 0h1m3 0h1m1 0h5m1 0h2m-20 1h6m2 0h1m2 0h2m3 0h1m2 0h2m-29 1h7m1 0h1m2 0h1m1 0h2m2 0h2m1 0h1m1 0h1m1 0h4m-28 1h1m5 0h1m1 0h2m2 0h2m1 0h1m4 0h1m3 0h1m1 0h3m-29 1h1m1 0h3m1 0h1m3 0h2m1 0h1m2 0h2m2 0h6m2 0h1m-29 1h1m1 0h3m1 0h1m1 0h4m2 0h3m2 0h4m1 0h1m3 0h1m-29 1h1m1 0h3m1 0h1m6 0h1m5 0h2m3 0h3m1 0h1m-29 1h1m5 0h1m1 0h8m1 0h1m2 0h1m1 0h2m3 0h1m-28 1h7m3 0h3m1 0h1m1 0h2m2 0h1m3 0h1m2 0h1"/></svg>
+      <div>
+        <div class="getapp-copy">Scan to download Auto Pedigree 24/7</div>
+        <div class="stores">
+          <div class="store">
+            <svg viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9Zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3Z"/></svg>
+            <div><small>Download on the</small><b>App Store</b></div>
+          </div>
+          <div class="store">
+            <svg viewBox="0 0 512 512"><path d="M325.3 234.3 104.6 13l280.8 161.2-60.1 60.1ZM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0Zm425.2 225.6-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8ZM104.6 499l280.8-161.2-60.1-60.1L104.6 499Z"/></svg>
+            <div><small>Get it on</small><b>Google Play</b></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== 2. ARMED RESPONSE ======================== -->
+<section class="page">
+  <div class="sheet">
+    <div class="sheet-hero">
+      <div class="inner">
+        <div>
+          <div class="eyebrow">Nationwide network</div>
+          <h2 style="margin-top:3mm">The closest responders,<br>sent straight to you.</h2>
+          <p>
+            Cutting edge technology combined with GPS connects you to the best armed
+            and medical responders in the country — over 5000 of them, nationwide.
+          </p>
+          <div class="facts">
+            <div class="fact"><b>4</b><span>armed response call-outs per person, every 12 months</span></div>
+            <div class="fact"><b>R450</b><span>out of terms usage, each (excl VAT)</span></div>
+            <div class="fact"><b>24/7</b><span>control room oversight on every activation</span></div>
+          </div>
+        </div>
+        <div class="sheet-phone"><img src="assets/app-signin.jpg" alt="Signing in to Auto Pedigree 24/7" /></div>
+      </div>
+    </div>
+
+    <div class="sheet-body">
+      <div class="eyebrow on-light">How it works</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <h4>Hold for help</h4>
+          <p>Hold the red HOLD button in your Auto Pedigree 24/7 app for 3 seconds.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <h4>Closest responder</h4>
+          <p>Your alert is distributed automatically to the 5 response vehicles closest to your location.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <h4>GPS navigation</h4>
+          <p>The accepting vehicle is navigated to your exact location through built-in GPS and accurate tracking.</p>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <h4>Instant client profile</h4>
+          <p>Your identity and other key information are shared automatically with the dispatched response vehicle and the control centre.</p>
+        </div>
+        <div class="note">
+          <h4>Control room back-up</h4>
+          <p>The control centre oversees all activations. It can dispatch additional resources such as SAPS and EMS if required.</p>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <b>Medical transport</b>
+        <p>Emergency response and stabilisation is covered. Transport to hospital is billed to you or your medical aid.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><b>Auto Pedigree 24/7</b><span>2</span></div>
+</section>
+
+<!-- ============================ 3. RAF ============================ -->
+<section class="page">
+  <div class="sheet">
+    <div class="sheet-hero">
+      <div class="inner">
+        <div>
+          <div class="eyebrow">After a road accident</div>
+          <h2 style="margin-top:3mm">Road Accident<br>Fund Claims</h2>
+          <div class="lede">Injured in a road accident? We run the claim for you.</div>
+          <p>
+            The Road Accident Fund provides financial support to people injured or killed
+            in road accidents caused by another driver's negligence. Claiming is slow and
+            full of paperwork. Your membership puts a claims team, a lawyer and the
+            reports behind you — and it costs you nothing.
+          </p>
+          <div class="facts">
+            <div class="fact"><b>100%</b><span>of your Road Accident Fund payout, at the end of the claim</span></div>
+            <div class="fact"><b>R0</b><span>legal representation, administration, claims management and reports</span></div>
+          </div>
+        </div>
+        <div class="sheet-phone"><img src="assets/app-raf.jpg" alt="RAF Assist in the Auto Pedigree 24/7 app" /></div>
+      </div>
+    </div>
+
+    <div class="sheet-body">
+      <div class="eyebrow on-light">How to claim</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <h4>Get in touch</h4>
+          <p>Email support@projecthelp.co.za, or tap RAF on the app's home screen.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <h4>Verify your cover</h4>
+          <p>Give your ID number or membership number so we can confirm your membership.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <h4>We take it from there</h4>
+          <p>Our claims team contacts you and guides you through every step of the claim.</p>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <h4>You and your partner</h4>
+          <p>The main member, and your spouse or partner — including marriages under the Marriage Act, the Recognition of Customary Marriages Act, the Civil Union Act, or the tenets of any Asiatic religion.</p>
+        </div>
+        <div class="note">
+          <h4>Your children</h4>
+          <p>Dependent children under 21 — adopted, foster and step-children included, and children who are permanently reliant on your support — or up to 25 if they are full-time students and unmarried.</p>
+        </div>
+      </div>
+
+      <div class="pills">
+        <span class="pill">Claim within 3 years of the accident</span>
+        <span class="pill">Hit-and-run: within 2 years</span>
+        <span class="pill">Accident must happen in South Africa</span>
+        <span class="pill">Membership active for the whole claim</span>
+      </div>
+
+      <div class="disclaimer">
+        <b>RAF Assist is not insurance</b>
+        <p>
+          It is a service that helps you claim from the Road Accident Fund. We cannot
+          guarantee a payout, but we make every reasonable effort to reach a settlement —
+          and the information you give us must be complete and accurate, because anything
+          incorrect can jeopardise the claim.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><b>Auto Pedigree 24/7</b><span>3</span></div>
+</section>
+
+<!-- ========================== 4. LICENCE ========================== -->
+<section class="page">
+  <div class="sheet">
+    <div class="sheet-hero">
+      <div class="inner">
+        <div>
+          <div class="eyebrow">Your licence</div>
+          <h2 style="margin-top:3mm">Licence Disc<br>Renewal</h2>
+          <div class="lede">Renew your disc in minutes.</div>
+          <p>
+            No queues. We renew your disc with the authorities and courier it straight to
+            your door. Service and delivery cost you nothing.
+          </p>
+          <div class="facts">
+            <div class="fact"><b>R0</b><span>service and delivery. You pay only the licence fees</span></div>
+            <div class="fact"><b>∞</b><span>pay-as-you-go — as many vehicles as you like</span></div>
+          </div>
+        </div>
+        <div class="sheet-phone"><img src="assets/app-licence.jpg" alt="Licence disc renewal in the Auto Pedigree 24/7 app" /></div>
+      </div>
+    </div>
+
+    <div class="sheet-body">
+      <div class="eyebrow on-light">How it works</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <h4>Add your vehicle</h4>
+          <p>Tap Licence on the home screen and add your vehicle once: registration, make and model.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <h4>We renew it</h4>
+          <p>We tell you when renewal is due, quote the fees up front and renew with the authorities.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <h4>Disc delivered</h4>
+          <p>Your new licence disc is couriered to your address.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:10mm; padding-top:7mm; border-top:1px solid var(--line)">
+        <div class="eyebrow on-light">Where we cover</div>
+        <div class="pills" style="margin-top:4mm">
+          <span class="pill">Gauteng</span><span class="pill">KwaZulu-Natal</span>
+          <span class="pill">Eastern Cape</span><span class="pill">Limpopo</span>
+          <span class="pill">Free State</span><span class="pill">Northern Cape</span>
+          <span class="pill">Western Cape</span><span class="pill">Mpumalanga</span>
+          <span class="pill">North West</span>
+        </div>
+      </div>
+
+      <div class="disclaimer">
+        <b>How you pay</b>
+        <p>Debit card, credit card or EFT. You pay the licence fees for each renewal; the service and the courier are free.</p>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><b>Auto Pedigree 24/7</b><span>4</span></div>
+</section>
+
+<!-- =========================== 5. FINES =========================== -->
+<section class="page">
+  <div class="sheet">
+    <div class="sheet-hero">
+      <div class="inner">
+        <div>
+          <div class="eyebrow">Your fines</div>
+          <h2 style="margin-top:3mm">Fines Assist</h2>
+          <div class="lede">Know what you owe, and settle it in one tap.</div>
+          <p>
+            We pull your outstanding fines from the authorities — RTMC, JMPD and the metros
+            — across 250 municipalities, so nothing turns up as a surprise at a roadblock.
+          </p>
+          <div class="facts">
+            <div class="fact"><b>50%</b><span>discount on fines paid within 30 days</span></div>
+            <div class="fact"><b>R8</b><span>service fee per fine payment</span></div>
+          </div>
+        </div>
+        <div class="sheet-phone"><img src="assets/app-licence.jpg" alt="The Auto Pedigree 24/7 app" /></div>
+      </div>
+    </div>
+
+    <div class="sheet-body">
+      <div class="eyebrow on-light">How it works</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <h4>Sync your fines</h4>
+          <p>Tap Fines on the home screen and sync. We pull the latest from the authorities.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <h4>Stay informed</h4>
+          <p>Get a fines report in-app every month. We flag anything new.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <h4>Settle in one tap</h4>
+          <p>Pay one fine or all of them. We settle on your behalf and send proof of payment.</p>
+        </div>
+      </div>
+
+      <div class="notes">
+        <div class="note">
+          <h4>Across 250 municipalities</h4>
+          <p>Fines are collected against the ID number on your membership, from every authority we can reach — so a fine in another province does not go unnoticed.</p>
+        </div>
+        <div class="note">
+          <h4>Proof of payment, every time</h4>
+          <p>We settle on your behalf and send you the proof. Nothing to print, nothing to queue for.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><b>Auto Pedigree 24/7</b><span>5</span></div>
+</section>
+
+<!-- ======================= 6. WILLS + GET GOING ======================= -->
+<section class="page">
+  <div class="sheet">
+    <div class="sheet-hero">
+      <div class="inner">
+        <div>
+          <div class="eyebrow">Wills and trusts</div>
+          <h2 style="margin-top:3mm">Free Wills</h2>
+          <div class="lede">Get a professionally drafted Will.</div>
+          <p>
+            Free to start, drafted by qualified Wills and Trusts professionals. Request a
+            call back in the app and a consultant contacts you directly. No queues and no
+            legal jargon.
+          </p>
+          <div class="facts">
+            <div class="fact"><b>24h</b><span>typical call back after you request one in the app</span></div>
+            <div class="fact"><b>Free</b><span>to start. Project Help is the entry point; the drafting is handled with you directly</span></div>
+          </div>
+        </div>
+        <div class="sheet-phone"><img src="assets/app-wills.jpg" alt="Free Wills in the Auto Pedigree 24/7 app" /></div>
+      </div>
+    </div>
+
+    <div class="sheet-body">
+      <div class="eyebrow on-light">Ready in 3 steps</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <h4>Download</h4>
+          <p>Scan the QR code on the cover, or search <b>Auto Pedigree 24/7</b> in the App Store or Google Play.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <h4>Sign in</h4>
+          <p>Open the app, enter your mobile number and type in the one-time PIN we send you.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <h4>Set up</h4>
+          <p>Add your vehicle for licence renewal and fines. Help is now one button away.</p>
+        </div>
+      </div>
+
+      <div style="margin-top:9mm; padding-top:6mm; border-top:1px solid var(--line)">
+        <div class="eyebrow on-light">Good to know</div>
+        <div class="notes" style="margin-top:4mm; padding-top:0; border:0">
+          <div class="note">
+            <h4>What happens when I hold the panic button?</h4>
+            <p>Your alert goes to the 5 response vehicles closest to you. The first to accept is guided to your exact location while the control centre oversees the call-out and can send SAPS or EMS if needed.</p>
+          </div>
+          <div class="note">
+            <h4>Is my location tracked?</h4>
+            <p>No. Your location is only shared with the control centre and responders when you hold the panic button.</p>
+          </div>
+          <div class="note">
+            <h4>Is there a call-out fee?</h4>
+            <p>Your membership covers 4 armed response call-outs per person per year. Call-outs beyond this, or for non-emergencies, cost R450.00 (excl VAT) each. Medical transport to hospital is billed to you or your medical aid.</p>
+          </div>
+          <div class="note">
+            <h4>How do I cancel?</h4>
+            <p>Email support@projecthelp.co.za. Cancellation takes 30 days' notice.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="foot"><b>Auto Pedigree 24/7</b><span>6</span></div>
+</section>
+
+<!-- ========================== 7. TERMS 1 ========================== -->
+<section class="page">
+  <div class="terms">
+    <div class="eyebrow on-light">The detail</div>
+    <h2 style="margin-top:3mm">Terms and Conditions</h2>
+
+    <div class="cols">
+      <h3>Membership</h3>
+      <p>Your Auto Pedigree 24/7 membership remains active for as long as you pay your weekly fee of R23.00.</p>
+      <p>Membership is family cover: you as the main member, your spouse or partner, and your dependent children as set out under RAF Assist below.</p>
+      <p>To use the services, your membership must be up to date.</p>
+      <p>You receive monthly in-app fine reports and can use licence renewal and fines payment immediately, with no waiting period. Both are pay-as-you-go services with no usage limits.</p>
+
+      <h3>Payment and cancellation</h3>
+      <p>Payments are deducted weekly. Services cease if payments stop.</p>
+      <p>You can cancel your membership on 30 days' notice by email to support@projecthelp.co.za.</p>
+      <p>Project Help (Pty) Ltd is the Administrator of your membership. Payments are debited with the reference "ProjectHelp".</p>
+      <p>If funds are insufficient we may re-present the payment instruction. Payments are taken on the next business day if the debit date falls on a Sunday or public holiday.</p>
+      <p>Subscription fees are payable in advance. No refunds are given on payments already taken.</p>
+
+      <h3>1. Armed and Medical Response</h3>
+      <h4>Armed Response</h4>
+      <p>Each covered person is entitled to 4 armed response call-outs every 12 months. Call-outs beyond this, or call-outs for events other than emergencies, are charged as out of terms usage: R450.00 (VAT exclusive).</p>
+      <h4>Medical Assistance</h4>
+      <p>Project Help manages and covers the dispatch of medical and ambulance services to the User in an emergency. If the User needs stabilisation and transport to hospital, the bill is for the User's account or their medical aid. Where applicable the emergency provider may bill the User's medical aid for transport. The service includes:</p>
+      <ul>
+        <li>Emergency response and stabilisation (guaranteed)</li>
+        <li>Medical transportation (subject to an alternate reimbursement model)</li>
+        <li>Emergency medical information (telephonic advice only)</li>
+        <li>Medical assistance hotline (telephonic advice only)</li>
+        <li>Telephonic trauma support lines (telephonic advice only)</li>
+      </ul>
+      <p>Our medical professionals prioritise a transfer based on medical condition, urgency, the patient's state and fitness to travel. The User understands that use of the Services may result in charges for excessive use of services or goods received from a Third Party Provider. Full terms and conditions: www.projecthelp.co.za/terms</p>
+
+      <h3>2. RAF Assist Benefit</h3>
+      <p>The RAF Assist benefit is not an insurance product. It is a service provided to help you claim from the Road Accident Fund.</p>
+      <p>The benefit covers you as the main member; your spouse or partner (under the Marriage Act, 68 of 1961; the Recognition of Customary Marriages Act, 68 of 1997; the Civil Union Act, 17 of 2006; or the tenets of any Asiatic religion); and any child under the age of 21 who is dependent on you (including adopted, foster and step-children, as well as children who are totally physically and/or mentally handicapped and reliant permanently on your support), or 25 years if they are full-time students and not married.</p>
+      <p>This service is only available if the motor accident happened within the Republic of South Africa.</p>
+      <p>A claim against the Road Accident Fund must be lodged within three years of the incident, except for hit-and-run events, which must be lodged within two years.</p>
+      <p>You must provide complete, accurate and true information at all times. Any incorrect information can jeopardise your claim with the Road Accident Fund.</p>
+      <p>We will assess the conditions of the claim and whether a claim exists against the Road Accident Fund.</p>
+      <p>You are free to get independent second opinions on the merits of the claim, but we will not be responsible for any costs incurred.</p>
+      <p>We will not cover any costs incurred by you being approached by an outside party. You do not have to use our services, but we will not be liable for any costs incurred by outside parties who help you.</p>
+      <p>At the time of the incident, you must comply with all the legal and regulatory requirements of the Road Accident Fund.</p>
+      <p>We do not guarantee a pay-out from the Road Accident Fund, but we will make all reasonable and necessary efforts to reach a settlement.</p>
+      <p>Your contributions must be fully paid at the time of the accident.</p>
+    </div>
+  </div>
+  <div class="foot"><b>Auto Pedigree 24/7</b><span>7</span></div>
+</section>
+
+<!-- ========================== 8. TERMS 2 ========================== -->
+<section class="page">
+  <div class="terms">
+    <h2>Terms and Conditions <span style="font-family:var(--body); font-size:11pt; font-weight:400; color:var(--ink-mute)">continued</span></h2>
+
+    <div class="cols">
+      <h3>3. Free Wills</h3>
+      <p>Free Wills is provided by qualified Wills and Trusts professionals. Project Help is the entry point only and passes your call-back request on.</p>
+      <p>All legal advice and drafting is handled directly with you, under the provider's own terms.</p>
+      <p>The Will is free to start. Any further services or fees are agreed between you and the provider.</p>
+
+      <h3>4. Fines Assist Benefit</h3>
+      <h4>Authorisation</h4>
+      <p>You authorise Fines Assist to collect and process all fines information from all relevant authorities across Southern Africa using the ID number provided in your membership application.</p>
+      <h4>Services</h4>
+      <p>Fines Assist gives you a monthly report of all fines linked to your ID number across South Africa and lets you settle fines through our payment options. We provide proof of payment once fines are settled. A service fee of R8.00 applies to all fine payments.</p>
+      <h4>Service disclaimer</h4>
+      <p>Project Help and its Vendors operate this service with all reasonable care, skill, policies, procedures and security measures. Except as set out in these terms, no warranties are given for this service.</p>
+
+      <h3>5. Car Licence Renewal</h3>
+      <p>Licence disc renewal is a pay-as-you-go service with no limit on the number of vehicles or renewals. The User pays the licence fees for each renewal.</p>
+      <p>The User authorises Project Help, its Vendors and suppliers of licence disc renewal services to retrieve User and vehicle information from the licensing authorities and process renewals on the User's behalf.</p>
+      <p>Covered areas: Gauteng, KwaZulu-Natal, Eastern Cape, Limpopo, Free State, Northern Cape, Western Cape, Mpumalanga and North West. These areas may be expanded or reduced at Project Help's discretion without prior notice.</p>
+      <p>The User is responsible for the accuracy of all information provided. Project Help, its Vendors and suppliers are not liable for the consequences of inaccurate information.</p>
+      <p>User information is kept private and confidential and is secured by reasonable data security measures. It is not shared with any third party without the User's express written consent or a court order.</p>
+
+      <h3>Governing law</h3>
+      <p>These services are provided within South Africa. These terms are governed by and construed under the law of the Republic of South Africa.</p>
+
+      <h3>Amendment</h3>
+      <p>Project Help and its Vendors may amend these terms, or any part of them, at any time without notice to Users.</p>
+
+      <h3>Limitation of liability</h3>
+      <p>Certain aspects of the services are provided by approved Vendors and suppliers, not by Project Help directly.</p>
+      <p>Project Help makes reasonable efforts to ensure information provided in connection with the services is accurate. Users acknowledge there may be errors or omissions, for which Project Help excludes all liability.</p>
+      <p>The User is solely responsible for decisions taken on information provided incorrectly at the time of accepting these terms.</p>
+      <p>Project Help is not liable for any direct, indirect, special or consequential loss arising from use of the services, except in the case of fraudulent representation.</p>
+      <p>While reasonable steps are taken to safeguard User information, Project Help accepts no liability for damages arising from a breach of confidentiality of that information.</p>
+
+      <h3>Disclosure of information</h3>
+      <p>Project Help and its Vendors may disclose personal information to comply with applicable laws, regulations and lawful government requests.</p>
+      <p>Statistics on sales and other non-identifying information may be shared with third parties. These statistics never include identifying personal information.</p>
+      <p>Personal information is not otherwise disclosed without the User's express consent or due legal process.</p>
+    </div>
+
+    <div class="contact">
+      <div>
+        <div class="eyebrow">Contact details</div>
+        <b>support@projecthelp.co.za</b>
+        <p style="color:rgba(255,255,255,.72); font-size:8.4pt; margin-top:1.5mm">Membership administration</p>
+      </div>
+      <img src="assets/ap-logo.png" alt="Auto Pedigree" />
+    </div>
+  </div>
+  <div class="foot"><b>Auto Pedigree 24/7</b><span>8</span></div>
+</section>
+
+</body>
+</html>

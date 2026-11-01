@@ -239,12 +239,40 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
   pointer-events:none;
   z-index:0;
 }
-.hero-app img{
+/* Three real screens in device frames. The old hero was one baked PNG of an
+   app that no longer exists — and its map was Montreal. Separate images mean
+   a screenshot can be swapped without a designer. */
+.hero-phones{
   position:relative; z-index:1;
-  width:100%; max-width:640px;
-  height:auto;
-  filter:drop-shadow(0 30px 60px rgba(0,0,0,.45)) drop-shadow(0 0 40px rgba(0,174,239,.1));
+  display:flex; align-items:center; justify-content:center;
+  gap:14px; width:100%;
+}
+@media(prefers-reduced-motion:reduce){ .phone{animation:none;} }
+.phone{
+  position:relative;
+  flex:0 0 auto;
+  width:30%; max-width:186px;
+  border-radius:26px;
+  padding:5px;
+  background:linear-gradient(160deg,#2b3340,#11151c);
+  box-shadow:0 24px 54px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.07) inset;
   animation:float 6s ease-in-out infinite;
+}
+.phone:nth-child(1){animation-delay:-.6s;}
+.phone:nth-child(3){animation-delay:-1.2s;}
+.phone.lead{
+  width:36%; max-width:224px;
+  z-index:2;
+  box-shadow:0 34px 70px rgba(0,0,0,.6), 0 0 44px rgba(0,174,239,.16), 0 0 0 1px rgba(255,255,255,.1) inset;
+}
+.phone img{
+  display:block; width:100%; height:auto;
+  border-radius:21px;
+}
+.phone::after{
+  content:""; position:absolute; left:50%; top:9px; transform:translateX(-50%);
+  width:34%; height:4px; border-radius:3px;
+  background:rgba(255,255,255,.14);
 }
 @keyframes float{
   0%,100%{transform:translateY(0);}
@@ -255,12 +283,12 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
   .hero{padding:36px 0 80px;}
   .hero-grid{grid-template-columns:1fr; gap:50px;}
   .hero-app{order:-1;}
-  .hero-app img{max-width:520px;}
+  .hero-phones{max-width:540px; margin:0 auto;}
 }
 @media(max-width:520px){
   .hero{padding:24px 0 60px;}
   .hero-trust{gap:24px; margin-top:36px;}
-  .hero-app img{max-width:100%;}
+  .hero-phones{gap:9px;}
 }
 
 /* ────────────────────────────────────────────────────────────
@@ -758,6 +786,16 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
           <span class="store-badge-text"><small>Get it on</small><span>Google Play</span></span>
         </a>
       </div>
+      <div class="fade-in delay-3" style="margin-top:18px">
+        <a href="auto-pedigree-247-brochure.pdf" download
+           style="display:inline-flex; align-items:center; gap:9px; color:#fff;
+                  text-decoration:none; font-weight:600; font-size:15px;
+                  border-bottom:1px solid rgba(255,255,255,.3); padding-bottom:3px;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 16l-5-5h3V4h4v7h3l-5 5Zm-7 2h14v2H5v-2Z"/></svg>
+          Download the brochure (PDF)
+        </a>
+      </div>
+
       <div class="hero-trust fade-in delay-3">
         <div class="trust-item">
           <div class="trust-num">5,500<span class="small">+</span></div>
@@ -775,7 +813,17 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
     </div>
 
     <div class="hero-app fade-in delay-2">
-      <img src="assets/hero-app.png" alt="Auto Pedigree Premium Help app — splash screen, panic button on map, and Panic Activated confirmation" loading="eager" width="640" height="430" />
+      <div class="hero-phones">
+        <div class="phone">
+          <img src="assets/app-onboard-licence.jpg" alt="Auto Pedigree 24/7 app: zero admin — your disc renewed and delivered" loading="eager" width="738" height="1600" />
+        </div>
+        <div class="phone lead">
+          <img src="assets/app-licence.jpg" alt="Auto Pedigree 24/7 app: renew your licence disc in minutes, couriered to your door" loading="eager" width="738" height="1600" />
+        </div>
+        <div class="phone">
+          <img src="assets/app-wills.jpg" alt="Auto Pedigree 24/7 app: get a professionally drafted Will, free to start" loading="eager" width="738" height="1600" />
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -786,7 +834,7 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
     <div class="section-eyebrow">What's included</div>
     <h2 class="section-title">Six services. One app. Zero hassle.</h2>
     <p class="section-sub">
-      Your Auto Plus Plan unlocks the full Premium Help platform — from armed response in a panic to renewing your licence disc from the couch.
+      Your Auto Plus Plan unlocks the full Auto Pedigree 24/7 app — from armed response in a panic to renewing your licence disc from the couch.
     </p>
 
     <div class="svc-grid">
@@ -867,7 +915,7 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
       <div class="step">
         <div class="step-num">1</div>
         <div class="step-title">Download</div>
-        <div class="step-body">Get the Premium Help app from the App Store or Google Play. Free to download.</div>
+        <div class="step-body">Get <strong>Auto Pedigree 24/7</strong> from the App Store or Google Play. Free to download.</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
@@ -958,21 +1006,21 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
 
     <div class="life-grid">
       <div class="life-card tall">
-        <img src="assets/life-beanie.jpg" alt="Auto Pedigree customer using the Premium Help app on his phone" loading="lazy" />
+        <img src="assets/life-beanie.jpg" alt="Auto Pedigree customer using the Auto Pedigree 24/7 app on his phone" loading="lazy" />
         <div class="life-caption">
           <div class="life-caption-tag">Day to day</div>
           <div class="life-caption-title">A guard in every province.</div>
         </div>
       </div>
       <div class="life-card offset">
-        <img src="assets/life-hood.jpg" alt="Young man holding the Premium Help app open on his phone" loading="lazy" />
+        <img src="assets/life-hood.jpg" alt="Young man holding the Auto Pedigree 24/7 app open on his phone" loading="lazy" />
         <div class="life-caption">
           <div class="life-caption-tag">On the move</div>
           <div class="life-caption-title">Ready before you are.</div>
         </div>
       </div>
       <div class="life-card">
-        <img src="assets/life-party.jpg" alt="Young woman out at night with the Premium Help app open" loading="lazy" />
+        <img src="assets/life-party.jpg" alt="Young woman out at night with the Auto Pedigree 24/7 app open" loading="lazy" />
         <div class="life-caption">
           <div class="life-caption-tag">After hours</div>
           <div class="life-caption-title">Out late. Still covered.</div>
@@ -993,7 +1041,7 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
       <details class="faq-item" open>
         <summary>Is the app really free for Auto Pedigree customers?</summary>
         <div class="faq-answer">
-          Yes. Your Auto Plus Plan covers the full Premium Help service for the agreed cover period at no additional cost to you. Download the app and use it as much — or as little — as you need.
+          Yes. Your Auto Plus Plan covers the full Auto Pedigree 24/7 service for the agreed cover period at no additional cost to you. Download the app and use it as much — or as little — as you need.
         </div>
       </details>
       <details class="faq-item">
@@ -1057,7 +1105,7 @@ button{font:inherit; cursor:pointer; border:none; background:none;}
       <div>
         <div class="footer-brand">Auto Plus Plan</div>
         <div class="footer-tagline">
-          The Premium Help service for Auto Pedigree customers. Built and operated by Project Help (Pty) Ltd.
+          The Auto Pedigree 24/7 service. Built and operated by Project Help (Pty) Ltd.
         </div>
       </div>
       <div class="footer-col">
