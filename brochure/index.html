@@ -199,6 +199,10 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
   background:radial-gradient(circle, rgba(0,174,239,.30), transparent 68%);
 }
 .sheet-hero .inner{position:relative; z-index:1; display:grid; grid-template-columns:1fr 54mm; gap:10mm; align-items:center;}
+/* A page with no phone beside the copy. The RAF screen was a wall of
+   T&C text -- correct in the app, and a poor advertisement -- and at
+   that height it ran past the navy band into the white below it. */
+.sheet-hero .inner-wide{grid-template-columns:1fr; max-width:150mm;}
 .sheet-hero h2{color:#fff;}
 .sheet-hero .lede{color:#fff;}
 .sheet-hero p{color:rgba(255,255,255,.80); margin-top:4mm;}
@@ -377,7 +381,7 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
           </p>
           <div class="facts">
             <div class="fact"><b>4</b><span>armed response call-outs per person, every 12 months</span></div>
-            <div class="fact"><b>R450</b><span>out of terms usage, each (excl VAT)</span></div>
+            <div class="fact"><b>5000+</b><span>armed and medical responders, nationwide</span></div>
             <div class="fact"><b>24/7</b><span>control room oversight on every activation</span></div>
           </div>
         </div>
@@ -429,7 +433,7 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
 <section class="page">
   <div class="sheet">
     <div class="sheet-hero">
-      <div class="inner">
+      <div class="inner inner-wide">
         <div>
           <div class="eyebrow">After a road accident</div>
           <h2 style="margin-top:3mm">Road Accident<br>Fund Claims</h2>
@@ -445,7 +449,6 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
             <div class="fact"><b>R0</b><span>legal representation, administration, claims management and reports</span></div>
           </div>
         </div>
-        <div class="sheet-phone"><img src="assets/app-raf.jpg" alt="RAF Assist in the Auto Pedigree 24/7 app" /></div>
       </div>
     </div>
 
@@ -710,8 +713,10 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
       <p>Subscription fees are payable in advance. No refunds are given on payments already taken.</p>
 
       <h3>1. Armed and Medical Response</h3>
-      <h4>Armed Response</h4>
-      <p>Each covered person is entitled to 4 armed response call-outs every 12 months. Call-outs beyond this, or call-outs for events other than emergencies, are charged as out of terms usage: R450.00 (VAT exclusive).</p>
+      <h4>Armed Response and fair use</h4>
+      <p>Armed response is there for emergencies. If you are in danger, call it — a genuine emergency is never charged for, and you should never hesitate because of what it might cost.</p>
+      <p>Fair use is 4 armed response call-outs per covered person every 12 months.</p>
+      <p>A charge of R450.00 (VAT exclusive) applies only to a call-out that is not a security or medical emergency — a cat in a tree, or a responder called out to impress friends — and to call-outs beyond the fair-use allowance once it has been reached.</p>
       <h4>Medical Assistance</h4>
       <p>Project Help manages and covers the dispatch of medical and ambulance services to the User in an emergency. If the User needs stabilisation and transport to hospital, the bill is for the User's account or their medical aid. Where applicable the emergency provider may bill the User's medical aid for transport. The service includes:</p>
       <ul>
