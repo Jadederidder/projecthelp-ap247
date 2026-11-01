@@ -242,6 +242,7 @@ PHONE_INSET = 6.0 / 353.2          # of the body height
 PHONE_RADIUS = 25.5 / 169.5        # of the body width (the shorter side)
 PHONE_DOT = 7.5 / 169.5            # of the body width
 PHONE_DOT_Y = 14.95 / 169.5        # of the body width, below the body top
+PHONE_HEIGHT = 353.2               # every phone in the document
 
 
 def draw_phone(p, centre_x, top, height, screenshot, aspect, dot=True):
@@ -382,7 +383,11 @@ def cover(doc, qr):
     # in the cover photograph. The new body is wider than the old one in
     # every direction that matters, so it covers it.
     p.blank_image(67)
-    draw_phone(p, 450.0, 225.8, 324.0,
+    # Exactly the licence, fines and wills phone: body 169.5 x 353.2. The
+    # mockup the original file drew here was 156 x 324 -- a different phone
+    # from the ones inside the brochure, which is what JD kept seeing. Same
+    # centre as the old one, so it sits where it always sat.
+    draw_phone(p, 450.0, 211.2, PHONE_HEIGHT,
                os.path.join(ASSETS, 'app-home-screen.png'), HOME_ASPECT)
 
     # --- the badge logo was a 170px bitmap blown up, and looked it
