@@ -116,7 +116,7 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
   border-left:1px solid var(--line); padding-left:3mm; line-height:1.25;
 }
 .cover-main{
-  display:grid; grid-template-columns:1fr 54mm; gap:9mm;
+  display:grid; grid-template-columns:1fr 68mm; gap:10mm;
   align-items:end; margin-top:auto;
 }
 .cover-copy h1{color:#fff;}
@@ -135,11 +135,14 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
 .privacy p{color:rgba(255,255,255,.72); font-size:8.6pt; margin:0;}
 .privacy b{color:#fff;}
 .cover-phone{
-  border-radius:7mm; padding:1.3mm;
-  background:linear-gradient(160deg,#39414f,#141821);
-  box-shadow:0 8mm 20mm rgba(0,0,0,.45);
+  filter:drop-shadow(0 8mm 22mm rgba(0,0,0,.55));
+  /* align-items:end pins its base to the copy, so a wider column makes it
+     grow UP into the photograph. Pushing it DOWN instead ran it under the
+     white services strip, which clips at the page edge and took the bottom
+     off the phone. */
+  position:relative; z-index:2;
 }
-.cover-phone img{display:block; width:100%; border-radius:5.8mm;}
+.cover-phone img{display:block; width:100%;}
 
 /* cover services strip */
 .cover-strip{
@@ -307,7 +310,7 @@ p{font-size:9.6pt; line-height:1.55; color:var(--ink-soft);}
       </div>
 
       <div class="cover-phone">
-        <img src="assets/app-licence.jpg" alt="The Auto Pedigree 24/7 app" />
+        <img src="assets/app-home.png" alt="The Auto Pedigree 24/7 home screen: your location on the map, and the HOLD button for armed response" />
       </div>
     </div>
   </div>
