@@ -50,7 +50,7 @@ SRC = os.path.join(HERE, 'source', 'premium-help-original.pdf')
 OUT = os.path.join(HERE, 'auto-pedigree-247.pdf')
 ASSETS = os.path.join(HERE, 'assets')
 LINK = 'https://ap247.projecthelp.co.za'
-HOME_ASPECT = 708 / 1454   # the home screenshot, cropped to the screen
+HOME_ASPECT = 710 / 1375   # the home screenshot, cropped to the screen
 
 _LOCAL = os.path.join(HERE, 'fonts')
 _SYS = '/usr/share/fonts/opentype/inter'
@@ -244,8 +244,13 @@ PHONE_DOT = 7.5 / 169.5            # of the body width
 PHONE_DOT_Y = 14.95 / 169.5        # of the body width, below the body top
 
 
-def draw_phone(p, centre_x, top, height, screenshot, aspect):
-    """Body, screen and camera dot, in the proportions this document uses."""
+def draw_phone(p, centre_x, top, height, screenshot, aspect, dot=True):
+    """Body, screen and camera dot, in the proportions this document uses.
+
+    dot=False for a screenshot that has no status bar of its own: on the
+    other pages the camera sits in the status bar, and on a screen that
+    starts straight into the app it would land on top of the UI.
+    """
     inset = height * PHONE_INSET
     screen_h = height - inset * 2
     screen_w = screen_h * aspect
@@ -254,8 +259,9 @@ def draw_phone(p, centre_x, top, height, screenshot, aspect):
     p.rect(x0, top, x1, top + height, PHONE_BODY, radius=PHONE_RADIUS)
     p.image(x0 + inset, top + inset, x1 - inset, top + height - inset,
             screenshot)
-    r = body_w * PHONE_DOT / 2
-    p.dot(centre_x, top + body_w * PHONE_DOT_Y, r, PHONE_BODY)
+    if dot:
+        p.dot(centre_x, top + body_w * PHONE_DOT_Y,
+              body_w * PHONE_DOT / 2, PHONE_BODY)
     return pymupdf.Rect(x0, top, x1, top + height)
 
 
@@ -377,7 +383,8 @@ def cover(doc, qr):
     # every direction that matters, so it covers it.
     p.blank_image(67)
     draw_phone(p, 450.0, 225.8, 324.0,
-               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT)
+               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT,
+               dot=False)
 
     # --- the badge logo was a 170px bitmap blown up, and looked it
     p.swap_image(64, os.path.join(ASSETS, 'project-help-logo.png'))
@@ -403,7 +410,8 @@ def armed(doc):
     # placed inside, which also takes the Mental Health tile off a page that
     # no longer sells it.
     draw_phone(p, 355.0, 549.8, 199.0,
-               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT)
+               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT,
+               dot=False)
     # The sentence names the app, so it reflows: two lines become three.
     # There is room before step 2, which starts at y=405.
     p.para(76.5, 352.8, 272, 396.5,
