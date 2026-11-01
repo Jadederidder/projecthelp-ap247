@@ -50,6 +50,7 @@ SRC = os.path.join(HERE, 'source', 'premium-help-original.pdf')
 OUT = os.path.join(HERE, 'auto-pedigree-247.pdf')
 ASSETS = os.path.join(HERE, 'assets')
 LINK = 'https://ap247.projecthelp.co.za'
+HOME_ASPECT = 708 / 1454   # the home screenshot, cropped to the screen
 
 _LOCAL = os.path.join(HERE, 'fonts')
 _SYS = '/usr/share/fonts/opentype/inter'
@@ -196,7 +197,7 @@ class Page:
                 r = pymupdf.Rect(*box)
                 sh = self.page.new_shape()
                 if extra:
-                    sh.draw_rect(r, radius=extra / min(r.width, r.height) / 2)
+                    sh.draw_rect(r, radius=extra)
                 else:
                     sh.draw_rect(r)
                 sh.finish(fill=color, color=color)
@@ -229,6 +230,33 @@ class Page:
                 src = pymupdf.open(stream=text.encode(), filetype='svg')
                 pdf = pymupdf.open('pdf', src.convert_to_pdf())
                 self.page.show_pdf_page(pymupdf.Rect(*box), pdf, 0)
+
+
+# The mockups on the licence, fines and wills pages are all one shape: a
+# filled body, the screen inset inside it, and a camera dot drawn on top of
+# the screen. Measured off the licence page -- body 169.5 x 353.2, screen
+# inset 6pt, corner radius 25.5pt, dot 7.5pt across, its centre 15pt below
+# the body's top edge -- and held as ratios so a phone of any size matches.
+PHONE_BODY = (0.043, 0.090, 0.149)
+PHONE_INSET = 6.0 / 353.2          # of the body height
+PHONE_RADIUS = 25.5 / 169.5        # of the body width (the shorter side)
+PHONE_DOT = 7.5 / 169.5            # of the body width
+PHONE_DOT_Y = 14.95 / 169.5        # of the body width, below the body top
+
+
+def draw_phone(p, centre_x, top, height, screenshot, aspect):
+    """Body, screen and camera dot, in the proportions this document uses."""
+    inset = height * PHONE_INSET
+    screen_h = height - inset * 2
+    screen_w = screen_h * aspect
+    body_w = screen_w + inset * 2
+    x0, x1 = centre_x - body_w / 2, centre_x + body_w / 2
+    p.rect(x0, top, x1, top + height, PHONE_BODY, radius=PHONE_RADIUS)
+    p.image(x0 + inset, top + inset, x1 - inset, top + height - inset,
+            screenshot)
+    r = body_w * PHONE_DOT / 2
+    p.dot(centre_x, top + body_w * PHONE_DOT_Y, r, PHONE_BODY)
+    return pymupdf.Rect(x0, top, x1, top + height)
 
 
 def icon_svg(path_d, colour):
@@ -287,7 +315,7 @@ def cover(doc, qr):
     box_x = left + measure('Auto Pedigree ', 'ExtraBold', size)
     box_w = measure('24/7', 'ExtraBold', size) + size * 0.52
     p.rect(box_x, baseline - size * 0.84, box_x + box_w, baseline + size * 0.26,
-           RED, radius=size * 0.13)
+           RED, radius=0.12)
     p.line(box_x + size * 0.26, baseline, '24/7', size=size, weight='ExtraBold',
            color=WHITE)
 
@@ -312,7 +340,7 @@ def cover(doc, qr):
     # The old shield carried a medical cross. Without medical response that
     # mark would promise something the product does not include.
     p.erase(58.0, 660.0, 112.0, 711.0)
-    p.rect(62.2, 663.0, 107.2, 708.0, RED_TILE, radius=11.0)
+    p.rect(62.2, 663.0, 107.2, 708.0, RED_TILE, radius=0.24)
     p.svg(72.9, 673.5, 96.5, 697.1, icon_svg(SHIELD, '#d0312d'))
     p.para(34, 718.0, 136, 744.0, 'Armed Response', size=9.75, weight='Bold',
            color=TILE_LABEL, align=1, lead=1.26, pad=3.0)
@@ -324,7 +352,7 @@ def cover(doc, qr):
     ), start=2):
         cx = 62.2 + (slot - 1) * 106.5 + 22.5
         p.erase(cx - 52, 660.0, cx + 52, 745.0)
-        p.rect(cx - 22.5, 663.0, cx + 22.5, 708.0, tint, radius=11.0)
+        p.rect(cx - 22.5, 663.0, cx + 22.5, 708.0, tint, radius=0.24)
         p.svg(cx - 11.8, 673.5, cx + 11.8, 697.1, icon_svg(glyph, colour))
         p.para(cx - 52, 718.0 if '\n' not in label else 715.1,
                cx + 52, 748.0, label, size=9.75, weight='Bold',
@@ -348,13 +376,11 @@ def cover(doc, qr):
     # in the cover photograph. The new body is wider than the old one in
     # every direction that matters, so it covers it.
     p.blank_image(67)
-    body_h, inset, mid = 324.0, 6.0, 450.0
-    screen_h = body_h - inset * 2
-    half = screen_h * (708 / 1374) / 2 + inset
-    p.rect(mid - half, 225.8, mid + half, 225.8 + body_h,
-           (0.043, 0.090, 0.149), radius=15.0)
-    p.image(mid - half + inset, 231.8, mid + half - inset, 543.8,
-            os.path.join(ASSETS, 'app-home-screen.jpg'))
+    draw_phone(p, 450.0, 225.8, 324.0,
+               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT)
+
+    # --- the badge logo was a 170px bitmap blown up, and looked it
+    p.swap_image(64, os.path.join(ASSETS, 'project-help-logo.png'))
     p.commit()
 
 
@@ -376,12 +402,8 @@ def armed(doc):
     # over the top at the real screenshot's proportions and the home screen
     # placed inside, which also takes the Mental Health tile off a page that
     # no longer sells it.
-    body = pymupdf.Rect(303.7, 549.8, 406.3, 748.8)
-    inset = 3.6
-    p.rect(body.x0, body.y0, body.x1, body.y1, (0.043, 0.090, 0.149),
-           radius=9.0)
-    p.image(body.x0 + inset, body.y0 + inset, body.x1 - inset,
-            body.y1 - inset, os.path.join(ASSETS, 'app-home-screen.jpg'))
+    draw_phone(p, 355.0, 549.8, 199.0,
+               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT)
     # The sentence names the app, so it reflows: two lines become three.
     # There is room before step 2, which starts at y=405.
     p.para(76.5, 352.8, 272, 396.5,
@@ -622,6 +644,7 @@ def terms_one(doc):
 
 def terms_two(doc):
     p = Page(doc, 8)
+    p.swap_image(441, os.path.join(ASSETS, 'project-help-logo.png'))
     p.para(168.0, 687.2, 428, 704.2, 'Email  support@projecthelp.co.za',
            size=13.5, weight='SemiBold', color=WHITE, align=1, fill=NAVY,
            lead=1.26)
