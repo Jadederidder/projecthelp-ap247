@@ -161,6 +161,11 @@ class Page:
         self._draw.append(('blank', None, xref, None, None, None, 0, None))
         return self
 
+    def dot(self, cx, cy, r, color):
+        self._draw.append(('dot', (cx, cy, r, 0), None, None, None, color,
+                           0, None))
+        return self
+
     def image(self, x0, y0, x1, y1, path):
         self._draw.append(('img', (x0, y0, x1, y1), path, None, None, None,
                            0, None))
@@ -206,6 +211,12 @@ class Page:
                     pymupdf.Rect(r.x0, r.y0 + 6.2, r.x1, r.y1), text,
                     fontname='FSemiBold', fontfile=fontfile('SemiBold'),
                     fontsize=size, color=color, align=1)
+            elif kind == 'dot':
+                cx, cy, r, _ = box
+                sh = self.page.new_shape()
+                sh.draw_circle(pymupdf.Point(cx, cy), r)
+                sh.finish(fill=color, color=color)
+                sh.commit()
             elif kind == 'swap':
                 self.page.replace_image(extra, filename=text)
             elif kind == 'blank':
@@ -227,6 +238,19 @@ def icon_svg(path_d, colour):
 
 # The RAF van, lifted from the service strip on ap247.projecthelp.co.za so the
 # brochure and the landing page carry the same mark.
+TILE_LABEL = (0x1e / 255, 0x2a / 255, 0x36 / 255)
+RED_TILE = (0.9843, 0.9137, 0.9098)
+GREEN_TILE = (0.9176, 0.9529, 0.8863)
+BLUE_TILE = (0.9098, 0.9333, 0.9569)
+VIOLET_TILE = (0.9333, 0.9176, 0.9686)
+
+# The service marks, the same paths the landing page uses.
+SHIELD = ('M12 2 4 5.5v5.8c0 5 3.4 9.7 8 10.7 4.6-1 8-5.7 8-10.7V5.5L12 2Z'
+          'm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z')
+LICENCE = 'M3 5h18v14H3V5Zm2 3v2h7V8H5Zm0 4v2h5v-2H5Zm9-4v6h5V8h-5Z'
+FINES = ('M4 4h16v16H4V4Zm2.5 3v2h11V7h-11Zm0 4v2h11v-2h-11Zm0 4v2h7v-2h-7Z')
+WILL = ('M6 2h8l4 4v16H6V2Zm7 1.5V7h3.5L13 3.5ZM8 11v1.6h8V11H8Zm0 4v1.6h8'
+        'V15H8Z')
 VAN = ('M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Zm10 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z'
        'M3 6h11v6h3.5l2.5 3v2h-1.1a3.5 3.5 0 0 0-6.8 0H9.9a3.5 3.5 0 0 0-6.8 '
        '0H3V6Z')
@@ -249,7 +273,7 @@ def cover(doc, qr):
     # "Auto Pedigree" + a red box around "24/7". The name is longer than the
     # one it replaces and the phone mockup fixes the right-hand limit, so the
     # size is fitted to the space rather than guessed at.
-    left, limit, baseline = 42.0, 366.0, 345.0
+    left, limit, baseline = 42.0, 354.0, 345.0
     size = 37.5
     while size > 20:
         w = (measure('Auto Pedigree ', 'ExtraBold', size)
@@ -267,40 +291,97 @@ def cover(doc, qr):
     p.line(box_x + size * 0.26, baseline, '24/7', size=size, weight='ExtraBold',
            color=WHITE)
 
+    # --- Auto Pedigree does not carry medical response: the member already
+    # has it from another provider. It comes out of the brochure until it is
+    # part of the product.
+    p.para(42, 398.5, 345, 452.7,
+           'Over 5000 Armed Responders protecting you and your family. Hold '
+           'one button to reach the closest response vehicles from a '
+           'nationwide network.',
+           size=12.0, color=(0xd5 / 255, 0xde / 255, 0xe8 / 255), fill=NAVY)
+
     # --- second cover paragraph: Mental Health is not part of this product.
     p.para(42, 468.3, 345, 502.9,
            'If you are ever injured in a road accident, the RAF button '
            'starts your claim at no cost to you.',
            size=12.0, color=(0xd5 / 255, 0xde / 255, 0xe8 / 255), fill=NAVY)
 
-    # --- service strip: Mental Health Support -> RAF Claims, icon and label.
-    p.erase(172.0, 666.0, 211.0, 705.0, fill=(0.918, 0.953, 0.886))
-    p.svg(179.5, 673.5, 203.1, 697.1, icon_svg(VAN, '#3f7a1c'))
-    # One line where Mental Health Support took two, so it is dropped to sit
-    # on the same baseline as the other four labels.
-    p.para(148, 718.0, 235, 744.0, 'RAF Claims', size=9.75, weight='Bold',
-           color=(0x1e / 255, 0x2a / 255, 0x36 / 255), align=1, lead=1.26,
-           pad=3.0)
+    # --- service strip. Mental Health leaves, RAF goes to the end, and the
+    # three between it shuffle up one slot, so four of the five tiles are
+    # redrawn. Slot 1 keeps its shield and only loses the word "Medical".
+    # The old shield carried a medical cross. Without medical response that
+    # mark would promise something the product does not include.
+    p.erase(58.0, 660.0, 112.0, 711.0)
+    p.rect(62.2, 663.0, 107.2, 708.0, RED_TILE, radius=11.0)
+    p.svg(72.9, 673.5, 96.5, 697.1, icon_svg(SHIELD, '#d0312d'))
+    p.para(34, 718.0, 136, 744.0, 'Armed Response', size=9.75, weight='Bold',
+           color=TILE_LABEL, align=1, lead=1.26, pad=3.0)
+    for slot, (tint, glyph, colour, label) in enumerate((
+        (BLUE_TILE, LICENCE, '#1f3a55', 'Licence Disc\nRenewal'),
+        (BLUE_TILE, FINES, '#1f3a55', 'Fines Payment'),
+        (VIOLET_TILE, WILL, '#6b4ce0', 'Free Wills'),
+        (GREEN_TILE, VAN, '#3f7a1c', 'RAF Claims'),
+    ), start=2):
+        cx = 62.2 + (slot - 1) * 106.5 + 22.5
+        p.erase(cx - 52, 660.0, cx + 52, 745.0)
+        p.rect(cx - 22.5, 663.0, cx + 22.5, 708.0, tint, radius=11.0)
+        p.svg(cx - 11.8, 673.5, cx + 11.8, 697.1, icon_svg(glyph, colour))
+        p.para(cx - 52, 718.0 if '\n' not in label else 715.1,
+               cx + 52, 748.0, label, size=9.75, weight='Bold',
+               color=TILE_LABEL, align=1, lead=1.26, pad=0.0)
 
     # --- the QR took you to the Premium Help listing.
     p.erase(114.0, 754.5, 177.0, 817.5)
     p.image(116.3, 756.8, 174.7, 815.2, qr)
 
     # --- the hero mockup was a design of an app that was never shipped.
-    # The old bitmap is blanked where it sits (a redaction rectangle here
-    # would punch a white hole in the cover photograph behind it), then the
-    # real screenshot is drawn over the same spot at its own proportions.
+    #
+    # The phone is two objects: a filled rounded rectangle for the body, and
+    # the screen as a bitmap inset 6pt inside it. The real home screen is a
+    # wider phone than the one that was drawn here (0.515 against 0.462), so
+    # forcing it into the old slot either squashed it or left black bands
+    # down the sides. The body is redrawn to the screenshot's proportions
+    # instead, at the same height and on the same centre line, and the
+    # screen is placed inside it.
+    #
+    # Nothing is erased: a redaction rectangle here would punch a white hole
+    # in the cover photograph. The new body is wider than the old one in
+    # every direction that matters, so it covers it.
     p.blank_image(67)
-    old = pymupdf.Rect(378.0, 231.8, 522.0, 543.8)
-    half = old.height * (1007 / 1733) / 2
-    mid = (old.x0 + old.x1) / 2
-    p.image(mid - half, old.y0, mid + half, old.y1,
-            os.path.join(ASSETS, 'app-home.png'))
+    body_h, inset, mid = 324.0, 6.0, 450.0
+    screen_h = body_h - inset * 2
+    half = screen_h * (708 / 1374) / 2 + inset
+    p.rect(mid - half, 225.8, mid + half, 225.8 + body_h,
+           (0.043, 0.090, 0.149), radius=15.0)
+    p.image(mid - half + inset, 231.8, mid + half - inset, 543.8,
+            os.path.join(ASSETS, 'app-home-screen.jpg'))
     p.commit()
 
 
 def armed(doc):
     p = Page(doc, 1)
+    # Medical response is not part of Auto Pedigree: the member already has
+    # it from another provider. Until that changes it is out of the brochure.
+    p.erase(38, 249, 440, 292, fill=WHITE)
+    p.line(42.0, 281.0, 'Armed', size=27.0, weight='ExtraBold', color=RED)
+    p.line(42.0 + measure('Armed ', 'ExtraBold', 27.0), 281.0, 'Response',
+           size=27.0, weight='ExtraBold', color=HEAD)
+    p.para(42, 151.8, 290, 205.2,
+           'Cutting edge technology combined with GPS connects you to the '
+           'best armed responders in the country.',
+           size=12.0, color=(0xd5 / 255, 0xde / 255, 0xe8 / 255), fill=NAVY)
+
+    # The phone in the dispatch illustration is part of one bitmap with the
+    # response pins, so it cannot be swapped on its own. Its body is redrawn
+    # over the top at the real screenshot's proportions and the home screen
+    # placed inside, which also takes the Mental Health tile off a page that
+    # no longer sells it.
+    body = pymupdf.Rect(303.7, 549.8, 406.3, 748.8)
+    inset = 3.6
+    p.rect(body.x0, body.y0, body.x1, body.y1, (0.043, 0.090, 0.149),
+           radius=9.0)
+    p.image(body.x0 + inset, body.y0 + inset, body.x1 - inset,
+            body.y1 - inset, os.path.join(ASSETS, 'app-home-screen.jpg'))
     # The sentence names the app, so it reflows: two lines become three.
     # There is room before step 2, which starts at y=405.
     p.para(76.5, 352.8, 272, 396.5,
@@ -346,7 +427,7 @@ def raf(doc):
     # three steps, inside the cards that were already there
     for x0, x1, title, body in (
         (58.5, 186.0, 'Get in touch',
-         "Tap RAF on the app's home screen, or call us."),
+         "Tap RAF on the app's home screen to start a claim."),
         (233.5, 361.0, 'Verify your cover',
          'Give your ID or membership number so we can confirm your cover.'),
         (408.5, 536.0, 'We run the claim',
@@ -422,8 +503,7 @@ def started(doc, qr):
     p.para(42, 618.4, 292, 698.0,
            'A genuine emergency is never charged for. Fair use is 4 armed '
            'response call-outs per person a year; a call-out that is not a '
-           'security or medical emergency costs R450.00 (excl VAT). Medical '
-           'transport is billed to you or your medical aid.', size=10.5)
+           'security emergency costs R450.00 (excl VAT).', size=10.5)
     p.para(312.8, 598.8, 555, 629.7, 'What does RAF Assist cost me?',
            size=12.0, weight='Bold', color=HEAD, lead=1.26)
     # the question it replaces ran to two lines; this one does not, so the
@@ -443,7 +523,14 @@ def started(doc, qr):
 
 
 def terms_one(doc):
+    """Page 8. Medical assistance was most of the left column and the top of
+    the right one. Taking it out would have left a third of the page blank in
+    the middle, so the sections after it move up: RAF Assist into the space
+    medical left in the left column, Free Wills and Fines Assist up the right
+    column. The white space ends up at the foot of the page, where it reads
+    as the end of the text rather than as a hole in it."""
     p = Page(doc, 7)
+
     p.para(52.5, 106.9, 285, 131.7,
            'Your Auto Pedigree 24/7 membership remains active for as long as '
            'you pay your weekly fee of R23.00.', size=9.0, color=TERMS)
@@ -451,51 +538,85 @@ def terms_one(doc):
            'Payments are deducted weekly. Services cease if payments stop.',
            size=9.0, color=TERMS)
     p.para(52.5, 265.2, 290, 289.2,
-           'You can cancel your membership on 30 days’ notice by email '
+           'You can cancel your membership on 30 days\u2019 notice by email '
            'to support@projecthelp.co.za.', size=9.0, color=TERMS)
     p.para(52.5, 321.4, 285, 345.5,
            'Payments are debited weekly with the reference "ProjectHelp".',
            size=9.0, color=TERMS)
+
+    # 1. Armed Response -- the "and Medical" half of the section goes
+    p.erase(38, 410, 290, 430)
+    p.line(42.0, 424.0, '1. Armed Response', size=9.75, weight='ExtraBold',
+           color=HEAD)
     p.para(42, 449.7, 290, 512.7,
            'A genuine emergency is never charged for. Fair use is 4 armed '
            'response call-outs per covered person every 12 months. R450.00 '
-           '(VAT exclusive) applies only to a call-out that is not a security '
-           'or medical emergency, or beyond the fair-use allowance.',
+           '(VAT exclusive) applies only to a call-out that is not a '
+           'security emergency, or beyond the fair-use allowance.',
            size=9.0, color=TERMS)
-    p.para(309.8, 137.7, 545, 175.2,
+
+    # everything medical, and the two columns it occupied
+    p.erase(38, 516, 292, 790)
+    p.erase(305, 64, 556, 745)
+
+    # 2. RAF Assist, moved into the left column
+    p.line(42.0, 530.0, '2. RAF Assist', size=9.75, weight='ExtraBold',
+           color=HEAD)
+    p.para(42, 545.0, 290, 740.0,
+           '\u2022  RAF Assist is not an insurance product. It is a service '
+           'that helps you claim from the Road Accident Fund.\n'
+           '\u2022  It covers the main member, your spouse or partner, and '
+           'dependent children under 21 \u2014 or under 25 if they are '
+           'unmarried full-time students \u2014 including adopted, foster '
+           'and step-children.\n'
+           '\u2022  The accident must have happened in South Africa. A claim '
+           'must be lodged within three years, or within two years for a '
+           'hit-and-run.\n'
+           '\u2022  We do not guarantee a pay-out, but we make all '
+           'reasonable efforts to reach a settlement. Your contributions '
+           'must be paid up at the time of the accident, and your '
+           'information must be complete and accurate.',
+           size=9.0, color=TERMS)
+
+    # right column, all of it moved up
+    p.para(309.8, 69.4, 548, 108.0,
            'Subscription fees are payable weekly in advance. No refunds are '
            'given on payments already taken. Full terms and conditions: '
            'www.projecthelp.co.za/terms', size=9.0, color=TERMS)
 
-    # section 2 was Mental Health Support
-    p.para(309.8, 187.1, 545, 199.4, '2. RAF Assist', size=9.75,
-           weight='ExtraBold', color=HEAD, lead=1.26)
-    # The bullets on this page are drawn separately from the text, at fixed
-    # heights. These two sections change how many paragraphs they hold, so
-    # the old bullets are erased with the copy and set inline instead.
-    p.para(309.8, 204.4, 555, 368.0,
-           '\u2022  RAF Assist is not an insurance product. It is a service that '
-           'helps you claim from the Road Accident Fund.\n'
-           '\u2022  It covers the main member, your spouse or partner, and dependent '
-           'children under 21 \u2014 or under 25 if they are unmarried '
-           'full-time students \u2014 including adopted, foster and '
-           'step-children.\n'
-           '\u2022  The accident must have happened in South Africa. A claim must be '
-           'lodged within three years, or within two years for a '
-           'hit-and-run.\n'
-           '\u2022  We do not guarantee a pay-out, but we make all reasonable '
-           'efforts to reach a settlement. Your contributions must be paid '
-           'up at the time of the accident, and your information must be '
-           'complete and accurate.', size=9.0, color=TERMS, lead=1.36)
-
-    p.para(309.8, 397.9, 550, 491.7,
+    p.line(309.8, 127.0, '3. Free Wills', size=9.75, weight='ExtraBold',
+           color=HEAD)
+    p.para(309.8, 142.0, 550, 236.0,
            '\u2022  Free Wills is provided by qualified Wills and Trusts '
            'professionals. Project Help is the entry point only and passes '
            'your call-back request on.\n'
-           '\u2022  All legal advice and drafting is handled directly between '
-           'you and the provider, under their own terms.\n'
+           '\u2022  All legal advice and drafting is handled directly '
+           'between you and the provider, under their own terms.\n'
            '\u2022  The Will is free to start. Any further services or fees '
            'are agreed between you and the provider.', size=9.0, color=TERMS)
+
+    p.line(309.8, 258.0, '4. Fines Assist Benefit', size=9.75,
+           weight='ExtraBold', color=HEAD)
+    p.line(309.8, 280.0, 'Authorisation', size=9.0, weight='Bold', color=HEAD)
+    p.para(309.8, 292.0, 550, 346.0,
+           'You authorise Fines Assist to collect and process all fines '
+           'information from all relevant authorities across Southern Africa '
+           'using the ID number provided in your membership application.',
+           size=9.0, color=TERMS)
+    p.line(309.8, 368.0, 'Services', size=9.0, weight='Bold', color=HEAD)
+    p.para(309.8, 380.0, 550, 447.0,
+           'Fines Assist gives you a monthly report of all fines linked to '
+           'your ID number across South Africa and lets you settle fines '
+           'through our payment options. We provide proof of payment once '
+           'fines are settled. A service fee of R8.00 applies to all fine '
+           'payments.', size=9.0, color=TERMS)
+    p.line(309.8, 469.0, 'Service disclaimer', size=9.0, weight='Bold',
+           color=HEAD)
+    p.para(309.8, 481.0, 550, 535.0,
+           'Project Help and its Vendors operate this service with all '
+           'reasonable care, skill, policies, procedures and security '
+           'measures. Except as set out in these terms, no warranties are '
+           'given for this service.', size=9.0, color=TERMS)
     p.commit()
 
 
@@ -507,11 +628,23 @@ def terms_two(doc):
     p.commit()
 
 
+# Cover, armed response, licence, fines, wills, RAF, getting started, terms.
+# RAF Assist moves to the end of the services, where JD wants it; everything
+# else keeps its order. The T&C sections are not renumbered, because they
+# never ran in page order in the first place.
+ORDER = [0, 1, 3, 4, 5, 2, 6, 7, 8]
+
+
 def footers(doc):
+    """Run last, after the reorder: the page number has to match where the
+    page ended up, not where it started."""
     for n in range(1, 8):
         p = Page(doc, n)
-        p.para(42.0, 804.4, 150.0, 815.7, 'Auto Pedigree 24/7', size=9.0,
+        p.erase(38.0, 801.0, 556.0, 819.0)
+        p.para(42.0, 804.4, 160.0, 815.7, 'Auto Pedigree 24/7', size=9.0,
                weight='SemiBold', color=MUTE, lead=1.26)
+        p.para(480.0, 804.4, 553.5, 815.7, str(n + 1), size=9.0,
+               weight='SemiBold', color=MUTE, align=2, lead=1.26)
         p.commit()
 
 
@@ -529,6 +662,8 @@ def main():
     started(doc, qr)
     terms_one(doc)
     terms_two(doc)
+
+    doc.select(ORDER)
     footers(doc)
 
     doc.save(OUT, garbage=4, deflate=True)
