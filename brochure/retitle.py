@@ -383,7 +383,7 @@ def cover(doc, qr):
     # every direction that matters, so it covers it.
     p.blank_image(67)
     draw_phone(p, 450.0, 225.8, 324.0,
-               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT)
+               os.path.join(ASSETS, 'app-home-screen.png'), HOME_ASPECT)
 
     # --- the badge logo was a 170px bitmap blown up, and looked it
     p.swap_image(64, os.path.join(ASSETS, 'project-help-logo.png'))
@@ -409,7 +409,7 @@ def armed(doc):
     # placed inside, which also takes the Mental Health tile off a page that
     # no longer sells it.
     draw_phone(p, 355.0, 549.8, 199.0,
-               os.path.join(ASSETS, 'app-home-screen.jpg'), HOME_ASPECT)
+               os.path.join(ASSETS, 'app-home-screen.png'), HOME_ASPECT)
     # The sentence names the app, so it reflows: two lines become three.
     # There is room before step 2, which starts at y=405.
     p.para(76.5, 352.8, 272, 396.5,
